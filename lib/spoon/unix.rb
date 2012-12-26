@@ -87,7 +87,7 @@ module Spoon
   def self.spawnp(*args)
     posix_spawnp(args[0], nil, nil, args, ENV)
   end
-  
+
   private
 
   class PointerArray
@@ -102,9 +102,9 @@ module Spoon
 
     def pointer
       if @pointer.nil? || (@pointer.size / @pointer.type_size) <= @ary.length
-	ptr = FFI::MemoryPointer.new(:pointer, @ary.length + 1)
-	ptr.put_array_of_pointer(0, @ary)
-	@pointer = ptr
+        ptr = FFI::MemoryPointer.new(:pointer, @ary.length + 1)
+        ptr.put_array_of_pointer(0, @ary)
+        @pointer = ptr
       end
       @pointer
     end
@@ -129,7 +129,7 @@ module Spoon
       native_type FFI::Type::POINTER
 
       def self.to_native(value, ctx)
-	value ? value.pointer : nil
+        value ? value.pointer : nil
       end
     end
 
