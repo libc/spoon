@@ -8,7 +8,7 @@ module Spoon
     SIZE = FFI::Platform.mac? ? FFI.type_size(:pointer) : 128
 
     def initialize
-      @pointer =  FFI::AutoPointer.new(LibC.malloc(SIZE), self.class)
+      @pointer =  FFI::AutoPointer.new(LibC.malloc(SIZE), self.class.method(:release))
       error = LibC.posix_spawn_file_actions_init(@pointer)
       raise SystemCallError.new("posix_file_actions_init", error) unless error == 0
     end
@@ -42,7 +42,7 @@ module Spoon
     SIZE = FFI::Platform.mac? ? FFI.type_size(:pointer) : 336
 
     def initialize
-      @pointer =  FFI::AutoPointer.new(LibC.malloc(SIZE), self.class)
+      @pointer =  FFI::AutoPointer.new(LibC.malloc(SIZE), self.class.method(:release))
       error = LibC.posix_spawnattr_init(@pointer)
       raise SystemCallError.new("posix_spawnattr_init", error) unless error == 0
     end
