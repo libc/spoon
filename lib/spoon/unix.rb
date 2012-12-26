@@ -55,6 +55,10 @@ module Spoon
     def pgroup=(group)
       error = LibC.posix_spawnattr_setpgroup(pointer, group)
       raise SystemCallError.new("posix_spawnattr_setpgroup", error) unless error == 0
+
+      # it's 2 on Mac OS X and linux
+      self.flags = flags | 2
+
       group
     end
 
@@ -63,6 +67,21 @@ module Spoon
       error = LibC.posix_spawnattr_getpgroup(pointer, group)
       raise SystemCallError.new("posix_spawnattr_getpgroup", error) unless error == 0
       get_pid(group)
+    end
+
+    def flags=(flags)
+      error = LibC.posix_spawnattr_setflags(pointer, flags)
+      raise SystemCallError.new("posix_spawnattr_setflags", error) unless error == 0
+      flags
+    end
+
+    def flags
+      flags = FFI::MemoryPointer.new :short
+      error = LibC.posix_spawnattr_getflags(pointer, flags)
+      raise SystemCallError.new("posix_spawnattr_getflags", error) unless error == 0
+      flags_i = flags.get_short 0
+      flags.free
+      flags_i
     end
   end
 
@@ -148,6 +167,8 @@ module Spoon
     attach_function :posix_spawnattr_destroy, [ :pointer ], :int
     attach_function :posix_spawnattr_setpgroup, [ :pointer, :pid_t ], :int
     attach_function :posix_spawnattr_getpgroup, [ :pointer, :pointer ], :int
+    attach_function :posix_spawnattr_setflags, [:pointer, :short], :int
+    attach_function :posix_spawnattr_getflags, [:pointer, :pointer], :int
     attach_function :malloc, [ :size_t ], :pointer
     attach_function :free, [ :pointer ], :void
     attach_function :strerror, [ :int ], :string
